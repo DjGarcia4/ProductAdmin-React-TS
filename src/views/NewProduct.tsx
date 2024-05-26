@@ -1,5 +1,6 @@
 import { Link, Form, ActionFunctionArgs } from "react-router-dom";
 import { toast } from "react-toastify";
+import { addProduct } from "../services/ProductService";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }: ActionFunctionArgs) {
@@ -7,7 +8,9 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (Object.values(data).includes("")) {
     toast.error("Todos los campos son obligatorios");
+    return {};
   }
+  addProduct(data);
   return {};
 }
 const NewProduct = () => {
