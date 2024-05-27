@@ -1,6 +1,27 @@
-import { Link, Form, ActionFunctionArgs, redirect } from "react-router-dom";
+import {
+  Link,
+  Form,
+  ActionFunctionArgs,
+  redirect,
+  LoaderFunctionArgs,
+  useLoaderData,
+} from "react-router-dom";
 import { toast } from "react-toastify";
-import { addProduct } from "../services/ProductService";
+import { addProduct, getProduct } from "../services/ProductService";
+import { Product } from "../types";
+
+// eslint-disable-next-line react-refresh/only-export-components
+export async function loader({ params }: LoaderFunctionArgs) {
+  if (params.id !== undefined) {
+    const product = await getProduct(+params.id);
+    if (!product) {
+      toast.error("Producto No Encontrado");
+      return redirect("/");
+    }
+
+    return product;
+  }
+}
 
 // eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }: ActionFunctionArgs) {
@@ -13,13 +34,13 @@ export async function action({ request }: ActionFunctionArgs) {
   await addProduct(data);
   return redirect("/");
 }
-const NewProduct = () => {
+const EditProduct = () => {
+  const product = useLoaderData() as Product;
+
   return (
     <>
       <div className="flex justify-between">
-        <h2 className=" text-4xl font-black text-slate-500">
-          Registrar Producto
-        </h2>
+        <h2 className=" text-4xl font-black text-slate-500">Editar Producto</h2>
         <Link
           to="/"
           className="rounded-md bg-indigo-600 p-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-500"
@@ -38,6 +59,7 @@ const NewProduct = () => {
             className="mt-2 block w-full p-3 bg-gray-50"
             placeholder="Nombre del Producto"
             name="name"
+            defaultValue={product.name}
           />
         </div>
         <div className="mb-4">
@@ -50,6 +72,7 @@ const NewProduct = () => {
             className="mt-2 block w-full p-3 bg-gray-50"
             placeholder="Precio Producto. ej. 200, 300"
             name="price"
+            defaultValue={product.price}
           />
         </div>
         <input
@@ -62,4 +85,4 @@ const NewProduct = () => {
   );
 };
 
-export default NewProduct;
+export default EditProduct;
