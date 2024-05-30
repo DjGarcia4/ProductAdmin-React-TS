@@ -66,3 +66,37 @@ export async function getProduct(id: Product["id"]) {
     console.log(error);
   }
 }
+
+export async function updateProduct(data: ProductData, id: Product["id"]) {
+  try {
+    const result = safeParse(ProductSchema, {
+      id,
+      name: data.name,
+      price: +data.price,
+      availability: data.availability === "true" ? true : false,
+    });
+    if (result.success) {
+      const url = `${import.meta.env.VITE_URL_API}/api/products/${id}`;
+      await axios.put(url, result.output);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function deleteProduct(id: Product["id"]) {
+  try {
+    const url = `${import.meta.env.VITE_URL_API}/api/products/${id}`;
+    await axios.delete(url);
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function updateAvailability(id: Product["id"]) {
+  try {
+    const url = `${import.meta.env.VITE_URL_API}/api/products/${id}`;
+    await axios.patch(url);
+  } catch (error) {
+    console.log(error);
+  }
+}
